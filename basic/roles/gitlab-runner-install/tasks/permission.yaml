@@ -1,0 +1,19 @@
+- name: Add the user gitlab-runner to docker group
+  user:
+    name: gitlab-runner
+    groups: docker
+
+- name: Give secure permissions to sudoers file
+  copy:
+    dest: "/etc/sudoers.d/90-gitlab-runner"
+    content: |
+      gitlab-runner ALL=(root) NOPASSWD:SETENV: /usr/bin/packer
+
+    owner: root
+    group: root
+    mode: '440'
+
+- name: Add the user gitlab-runner to sudo
+  user:
+    name: gitlab-runner
+    groups: [sudo]

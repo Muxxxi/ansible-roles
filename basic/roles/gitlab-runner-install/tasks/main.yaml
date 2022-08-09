@@ -1,0 +1,35 @@
+- name: Add GitLab apt key
+  apt_key:
+    url: https://packages.gitlab.com/gpg.key
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install GitLab Runner dependencies
+  apt:
+    pkg: 
+    - debian-archive-keyring
+    - apt-transport-https
+    - wget
+    - curl
+    state: present
+    update_cache: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Add GitLab Runner repository to apt
+  apt_repository:
+    repo: 'deb https://packages.gitlab.com/runner/gitlab-runner/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} main'
+    state: present
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Install GitLab Runner
+  apt:
+    name: gitlab-runner
+    state: latest
+    update_cache: yes
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Change concurrency for GitLab Runner
+  ansible.builtin.lineinfile:
+    path: /etc/gitlab-runner/config.toml
+    regexp: '^concurrent\s*=\s*\d+'
+    line: concurrent = {{ ansible_processor_vcpus }}

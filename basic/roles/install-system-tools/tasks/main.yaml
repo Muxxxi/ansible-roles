@@ -1,0 +1,37 @@
+- name: update hostname
+  hostname:
+    name: "{{ new_hostname }}"
+  when: new_hostname is defined
+
+- name: Install System Tools
+  apt:
+    pkg:
+    - htop
+    - nload
+    - fail2ban
+    - qemu-user-static
+    - tmux
+    - iotop
+    - glances
+    - wget
+    - git
+    - zip
+    - curl
+    state: latest
+    update_cache: yes
+    install_recommends: no
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: Enable service fail2ban
+  ansible.builtin.systemd:
+    name: fail2ban
+    enabled: yes
+    state: started
+
+- name: Remove snapd
+  apt:
+    name: snapd
+    purge: true
+    autoremove: true
+    state: absent
+  when: ansible_distribution == 'Ubuntu'
