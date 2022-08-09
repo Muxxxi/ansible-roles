@@ -1,15 +1,23 @@
-- name: update hostname
-  hostname:
-    name: "{{ new_hostname }}"
-  when: new_hostname is defined
+- name: Remove snapd
+  apt:
+    name: snapd
+    purge: true
+    autoremove: true
+    state: absent
+  when: ansible_distribution == 'Ubuntu'
 
 - name: Install System Tools
   apt:
     pkg:
+    - apt-transport-https
+    - ca-certificates
+    - gnupg
+    - software-properties-common
+    - lsb-release
+    - debian-archive-keyring
     - htop
     - nload
     - fail2ban
-    - qemu-user-static
     - tmux
     - iotop
     - glances
@@ -27,11 +35,4 @@
     name: fail2ban
     enabled: yes
     state: started
-
-- name: Remove snapd
-  apt:
-    name: snapd
-    purge: true
-    autoremove: true
-    state: absent
-  when: ansible_distribution == 'Ubuntu'
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

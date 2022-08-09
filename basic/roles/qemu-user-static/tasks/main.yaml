@@ -1,0 +1,36 @@
+---
+- name: Install System Tools
+  apt:
+    pkg:
+      - qemu-user-static
+    state: latest
+    update_cache: yes
+    install_recommends: no
+  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+- name: install qemu-user-static systemd unit file
+  copy: 
+    content: |
+      [Unit]
+      Description=Run Command on Boot
+      After=docker.service
+
+      [Service]
+      Type=oneshot
+      ExecStart=/usr/bin/docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+
+      [Install]
+      WantedBy=multi-user.target
+    dest: /etc/systemd/system/qemu-user-static.service
+
+- name: enable qemu-user-static service
+  systemd: 
+    name: qemu-user-static
+    daemon_reload: true
+    enabled: true
+
+- name: start qemu-user-static service
+  systemd: 
+    state: restarted
+    name: qemu-user-static
+  ignore_errors: true
