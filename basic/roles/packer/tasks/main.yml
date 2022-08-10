@@ -1,0 +1,59 @@
+- name: Add an Apt signing key, uses whichever key is at the URL
+  apt_key:
+    url: https://apt.releases.hashicorp.com/gpg
+    state: present
+
+- name: Install GitLab Runner dependencies
+  apt:
+    pkg:
+      - debian-archive-keyring
+      - apt-transport-https
+    state: present
+    update_cache: true
+
+- name: Get Ubuntu release
+  command: lsb_release -cs
+  register: os_release
+  changed_when: false
+
+- name: Add packer apt repository
+  apt_repository:
+    repo: "deb [arch=amd64] https://apt.releases.hashicorp.com {{ os_release.stdout }} main"
+    state: present
+
+- name: Install dependencies
+  apt:
+    pkg:
+      - kpartx
+      - qemu-user-static
+      - golang
+      - packer
+      - ansible
+    update_cache: true
+
+- name: Pull packer arm respository
+  git:
+    repo: https://github.com/solo-io/packer-builder-arm-image.git
+    dest: /srv/packer-builder-arm-image
+    version: master
+    force: true
+
+- name: Download go dependencies
+  command:
+    chdir: /srv/packer-builder-arm-image
+    cmd: go mod download
+
+- name: Create packer arm dir
+  file:
+    path: /root/.packer.d/plugins
+    state: directory
+
+- name: Install packer builder arm
+  command:
+    chdir: /srv/packer-builder-arm-image
+    cmd: go build -o /root/.packer.d/plugins/packer-plugin-arm-image
+
+- name: set PACKER_CONFIG_DIR=/root/ in .profile
+  ansible.builtin.lineinfile:
+    path: /etc/profile
+    line: "export PACKER_CONFIG_DIR=/root/"
