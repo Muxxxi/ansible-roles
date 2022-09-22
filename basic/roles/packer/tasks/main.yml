@@ -53,6 +53,12 @@
     chdir: /srv/packer-builder-arm-image
     cmd: go build -o /root/.packer.d/plugins/packer-plugin-arm-image
 
+- name: copy packer-plugin-arm to /usr/local/bin
+  ansible.builtin.copy:
+    src: /root/.packer.d/plugins/packer-plugin-arm-image
+    dest: /usr/local/bin/packer-plugin-arm-image
+    remote_src: true
+
 - name: set PACKER_CONFIG_DIR=/root/ in .profile
   ansible.builtin.lineinfile:
     path: /etc/profile
