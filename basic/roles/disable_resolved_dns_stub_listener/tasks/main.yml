@@ -1,0 +1,30 @@
+---
+
+- name: Make directory /etc/systemd/resolved.conf.d/
+  ansible.builtin.file:
+    path: "/etc/systemd/resolved.conf.d"
+    state: directory
+    mode: '0755'
+    owner: "root"
+    group: "root"
+  notify: Restart systemd-resolved
+
+- name: Create file to disable dns resolved stub
+  ansible.builtin.copy:
+    dest: "/etc/systemd/resolved.conf.d/disable-stub.conf"
+    content: |
+      [Resolve]
+      DNSStubListener=no
+    mode: '0644'
+    owner: "root"
+    group: "root"
+  notify: Restart systemd-resolved
+
+- name: Create symlink for resolv.conf
+  ansible.builtin.file:
+    src: /run/systemd/resolve/resolv.conf
+    dest: /etc/resolv.conf
+    owner: root
+    group: root
+    state: link
+  notify: Restart systemd-resolved
