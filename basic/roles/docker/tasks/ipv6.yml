@@ -1,0 +1,35 @@
+- name: Install collection docker at specific version
+  community.general.ansible_galaxy_install:
+    type: collection
+    name: community.docker:3.4.3
+
+- name: Start IPv6 NAT Docker container
+  community.docker.docker_container:
+    name: ipv6nat
+    image: robbertkl/ipv6nat
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    cap_drop:
+      - ALL
+    capabilities:
+      - NET_RAW
+      - NET_ADMIN
+      - SYS_MODULE
+    network_mode: host
+    restart_policy: always
+    state: started
+    detach: yes
+
+- name: configure docker mtu and ipv6
+  ansible.builtin.copy:
+    content: |
+      {
+        "ipv6": true,
+        "fixed-cidr-v6": "fd00::/80",
+        "userland-proxy": false
+      }
+    dest: /etc/docker/daemon.json
+    owner: root
+    group: root
+    mode: 0644
+  notify: Restart Docker

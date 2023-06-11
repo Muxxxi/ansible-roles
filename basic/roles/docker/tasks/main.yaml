@@ -50,3 +50,7 @@
     user: root
     job: "docker system prune -af"
     cron_file: docker-prune
+
+- name: Enable IPV6 if condition is true
+  include_tasks: "ipv6.yml"
+  when: ipv6.enabled == "true"
