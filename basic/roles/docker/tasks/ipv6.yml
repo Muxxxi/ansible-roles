@@ -1,8 +1,3 @@
-- name: Install collection docker at specific version
-  community.general.ansible_galaxy_install:
-    type: collection
-    name: community.docker:3.4.3
-
 - name: Start IPv6 NAT Docker container
   community.docker.docker_container:
     name: ipv6nat
