@@ -19,9 +19,13 @@
   ansible.builtin.copy:
     content: |
       {
-        "ipv6": true,
-        "fixed-cidr-v6": "fd00::/80",
-        "userland-proxy": false
+        "fixed-cidr-v6": "fd00:1::/64",
+        "userland-proxy": false,
+        "default-address-pools": [
+          { "base": "172.17.0.0/12", "size": 16 },
+          { "base": "192.168.0.0/16", "size": 20 },
+          { "base": "fd00::/48", "size": 64 }
+        ]
       }
     dest: /etc/docker/daemon.json
     owner: root
