@@ -19,6 +19,7 @@
   ansible.builtin.copy:
     content: |
       {
+        "ipv6": true,
         "fixed-cidr-v6": "fd00:1::/64",
         "userland-proxy": false,
         "default-address-pools": [
