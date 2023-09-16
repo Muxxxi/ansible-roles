@@ -1,0 +1,13 @@
+
+ipv6_enabled: false
+
+# Enable docker daemon config
+docker_config_path: /etc/docker/daemon.json
+docker_config_enabled: false
+docker_config: {}
+
+
+watchtower:
+  enabled: false
+  image:
+    tag: latest

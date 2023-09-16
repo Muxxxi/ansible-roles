@@ -28,5 +28,3 @@
     group: root
     mode: 0644
   notify: Restart Docker
-
-- meta: flush_handlers

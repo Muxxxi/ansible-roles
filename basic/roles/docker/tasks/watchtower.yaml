@@ -1,0 +1,19 @@
+---
+
+- name: Pull the latest watchtower image
+  community.docker.docker_image:
+    name: "containrrr/watchtower:{{ watchtower.image.tag }}"
+    source: pull
+
+- name: Start watchtower container
+  community.docker.docker_container:
+    name: watchtower
+    image: "containrrr/watchtower:{{ watchtower.image.tag }}"
+    command: -s "0 0 4 * * *"
+    env:
+      TZ: "Europe/Berlin"
+      WATCHTOWER_CLEANUP: "true"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    restart_policy: unless-stopped
+    state: started

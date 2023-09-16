@@ -1,3 +1,9 @@
+
+- name: Fail if not Debian or Ubuntu
+  fail:
+    msg: "This machine is neither Debian nor Ubuntu. Exiting!"
+  when: ansible_distribution not in ["Debian", "Ubuntu"]
+
 - name: Install Docker dependencies
   apt:
     pkg: 
@@ -9,19 +15,16 @@
     - lsb-release
     state: present
     update_cache: yes
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Add Docker’s official GPG key
   apt_key:
     url: https://download.docker.com/linux/{{ ansible_distribution | lower }}/gpg
     state: present
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Add Docker repository to apt
   apt_repository:
     repo: deb https://download.docker.com/linux/{{ ansible_distribution | lower }} {{ ansible_distribution_release }} stable
     state: present
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
 - name: Install Docker
   apt:
@@ -32,14 +35,7 @@
     - docker-compose
     state: latest
     update_cache: yes
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
-
-- name: Activate Docker service and start it
-  service:
-    name: docker
-    state: started
-    enabled: yes
-  when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+  notify: Restart Docker
 
 - name: Create docker cleanup cron job on 04:00
   ansible.builtin.cron:
@@ -54,3 +50,13 @@
 - name: Enable IPV6 if condition is true
   include_tasks: "ipv6.yml"
   when: ipv6_enabled
+
+- name: Add daemon.json configuration
+  include_tasks: "config.yaml"
+  when: docker_config_enabled
+
+- name: Start Watchtower
+  include_tasks: "watchtower.yaml"
+  when: watchtower.enabled
+
+- meta: flush_handlers
