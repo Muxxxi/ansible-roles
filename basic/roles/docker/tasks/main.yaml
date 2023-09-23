@@ -59,4 +59,8 @@
   include_tasks: "watchtower.yaml"
   when: watchtower.enabled
 
+- name: Enable Autoheal if condition is true
+  include_tasks: "autoheal.yml"
+  when: autoheal_enabled
+
 - meta: flush_handlers

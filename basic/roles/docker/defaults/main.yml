@@ -11,3 +11,6 @@ watchtower:
   enabled: false
   image:
     tag: latest
+
+
+autoheal_enabled: false

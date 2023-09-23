@@ -1,0 +1,15 @@
+- name: Pull the latest autoheal image
+  community.docker.docker_image:
+    name: "willfarrell/autoheal"
+    source: pull
+
+- name: Start Autoheal container
+  community.docker.docker_container:
+    name: autoheal
+    image: willfarrell/autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    env:
+      AUTOHEAL_CONTAINER_LABEL: all
+    restart_policy: always
+    state: started

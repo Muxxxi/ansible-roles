@@ -25,7 +25,26 @@
         "default-address-pools": [
           { "base": "172.17.0.0/12", "size": 16 },
           { "base": "192.168.0.0/16", "size": 20 },
-          { "base": "fd00::/48", "size": 64 }
+          {"base":"fd00:3::/48","size":64},
+          {"base":"fd00:4::/48","size":64},
+          {"base":"fd00:5::/48","size":64},
+          {"base":"fd00:6::/48","size":64},
+          {"base":"fd00:7::/48","size":64},
+          {"base":"fd00:8::/48","size":64},
+          {"base":"fd00:9::/48","size":64},
+          {"base":"fd00:a::/48","size":64},
+          {"base":"fd00:b::/48","size":64},
+          {"base":"fd00:c::/48","size":64},
+          {"base":"fd00:d::/48","size":64},
+          {"base":"fd00:e::/48","size":64},
+          {"base":"fd00:f::/48","size":64},
+          {"base":"fd00:10::/48","size":64},
+          {"base":"fd00:11::/48","size":64},
+          {"base":"fd00:12::/48","size":64},
+          {"base":"fd00:13::/48","size":64},
+          {"base":"fd00:14::/48","size":64},
+          {"base":"fd00:15::/48","size":64},
+          {"base":"fd00:16::/48","size":64}
         ]
       }
     dest: /etc/docker/daemon.json
